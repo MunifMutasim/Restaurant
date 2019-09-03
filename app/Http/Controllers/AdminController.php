@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use Auth;
 use Redirect;
 use Illuminate\Support\Facades\Hash;
+use App\Http\Requests\UpdatePassword;
 
 class AdminController extends Controller
 {
@@ -57,14 +58,17 @@ class AdminController extends Controller
         return view('backview/basic_admin/settings',compact('user'));
     }
 
-    public function updatepassword(Request $request){
-        $validation = $request->validate([
-            'cur_pwd'  => 'required',
-            'password' => 'required|confirmed',
-        ]);
-
-        if ($validation->fails()){
-            return Redirect::to('/admin/settings')->with('message','Failed');
+    public function updatepassword(UpdatePassword $request){
+        $user = Auth::user();
+        $current_password = $request->cur_pwd;
+        $new_password = $request->password;
+        if(Hash::check($current_password, $user->password)){ //Current pass matches user password
+            $request->user()->fill(['password' => Hash::make($new_password)])->save();
+            return redirect('admin/settings')->with('update_pwd_success','Password Updated Successfully');
+        }
+        
+        else {
+            return redirect('admin/settings')->with('update_pwd_fail',"Current Password is Incorrect");
         }
     }
 

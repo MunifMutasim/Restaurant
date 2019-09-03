@@ -57,7 +57,6 @@
                 <h1>Login</h1>
                 <p class="text-muted">Sign In to your account</p>
                   
-                
                   @if (\Session::has('invalid_login'))
                     <div id="alert" class="alert alert-danger" role="alert">
                         <button type="button" class="close" data-dismiss="alert">×</button>	
